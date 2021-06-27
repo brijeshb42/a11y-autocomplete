@@ -1,0 +1,51 @@
+.ac__container {
+  position: relative;
+  max-width: 200px;
+}
+
+.ac__input {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  padding: 5px 10px;
+  margin: 0px;
+  border: 1px solid #111;
+  font-size: 1.2rem;
+}
+
+.suggestion-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 0;
+  margin: 5px 0 0 0;
+  background-color: white;
+  border: 1px solid #111;
+  max-height: 300px;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+.suggestion-list-item {
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgb(204, 204, 204);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.suggestion-list-item:last-child {
+  border-bottom-color: transparent;
+}
+
+.suggestion-list-item--hovered,
+.suggestion-list-item:hover,
+.suggestion-list-item--selected {
+  background-color: #0e76b3;
+  color: white;
+}
+
+.suggestion-list-item--selected {
+  background-color: #0d6294;
+}
