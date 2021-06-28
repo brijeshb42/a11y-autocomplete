@@ -14,8 +14,20 @@ function App() {
     const urlParams = new URLSearchParams();
     urlParams.append('query', query);
     fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?${urlParams}`)
-      .then((resp) => resp.json())
-      .then((newSuggestions) => setSuggestions(newSuggestions));
+      .then((resp) => {
+        if (!resp.ok) {
+          throw new Error();
+        }
+        return resp.json();
+      })
+      .then((newSuggestions) => {
+        setHoveredItemIndex(0);
+        setSuggestions(newSuggestions);
+      })
+      .catch(() => {
+        setHoveredItemIndex(-1);
+        setSuggestions([]);
+      });
   }
 
   function handleInputChange(ev) {
