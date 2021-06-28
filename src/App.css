@@ -43,13 +43,15 @@
   border-bottom-color: transparent;
 }
 
-.suggestion-list-item--hovered,
-.suggestion-list-item:hover,
-.suggestion-list-item--selected {
-  background-color: #0e76b3;
-  color: white;
-}
-
 .suggestion-list-item--selected {
   background-color: #0d6294;
+}
+
+.suggestion-list-item--hovered {
+  background-color: #0e76b3;
+}
+
+.suggestion-list-item--hovered,
+.suggestion-list-item--selected {
+  color: white;
 }

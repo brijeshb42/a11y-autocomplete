@@ -34,6 +34,11 @@ function App() {
   }
 
   function handleInputChange(ev) {
+    // to force show the suggestions if user starts typing again
+    // after selecting an item.
+    if (!showSuggestions) {
+      setShowSuggestions(true);
+    }
     setUserInput(ev.target.value);
     fetchSuggestions(ev.target.value);
   }
@@ -45,6 +50,67 @@ function App() {
     }
     setSelectedItem(selectedItem);
     setShowSuggestions(false);
+  }
+
+  function handleKeyDown(ev) {
+    let newHoveredIndex = -1;
+    switch (ev.key) {
+      case 'Escape':
+        ev.preventDefault();
+        // hide the list if visible, else, clear the input
+        if (showSuggestions) {
+          setShowSuggestions(false);
+        } else {
+          setUserInput('');
+        }
+        return;
+      case 'Enter':
+        if (hoveredItemIndex !== -1 && hoveredItemIndex < suggestions.length) {
+          ev.preventDefault();
+          handleItemSelect(hoveredItemIndex);
+          return;
+        }
+        break;
+      case 'ArrowUp': {
+        // if already at the first item, goto the last item
+        if (hoveredItemIndex === 0) {
+          newHoveredIndex = suggestions.length - 1;
+        } else {
+          newHoveredIndex = hoveredItemIndex - 1;
+        }
+        break;
+      }
+      case 'Home': {
+        newHoveredIndex = 0;
+        break;
+      }
+      case 'ArrowDown': {
+        // if there are suggestions but the list is hidden, open the list again.
+        if (suggestions.length && !showSuggestions) {
+          ev.preventDefault();
+          setShowSuggestions(true);
+          return;
+        }
+        // if already at the last item, goto the first item
+        if (hoveredItemIndex === suggestions.length - 1) {
+          newHoveredIndex = 0;
+        } else {
+          newHoveredIndex = hoveredItemIndex + 1;
+        }
+        break;
+      }
+      case 'End': {
+        newHoveredIndex = suggestions.length - 1;
+        break;
+      }
+      default:
+        break;
+    }
+    // update the UI if value changes
+    if (newHoveredIndex !== -1) {
+      ev.preventDefault();
+      setHoveredItemIndex(newHoveredIndex);
+    }
   }
 
   React.useEffect(() => setUserInput(selectedItem?.name ?? ''), [selectedItem]);
@@ -65,6 +131,7 @@ function App() {
         }
         onChange={handleInputChange}
         onFocus={() => setShowSuggestions(true)}
+        onKeyDown={handleKeyDown}
       />
       <ul
         id={listId}
