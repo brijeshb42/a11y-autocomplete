@@ -9,6 +9,9 @@ function App() {
   const [hoveredItemIndex, setHoveredItemIndex] = React.useState(-1);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [showSuggestions, setShowSuggestions] = React.useState(false);
+  const isSuggestionListVisible = !!suggestions.length && showSuggestions;
+  const inputId = 'ac-input';
+  const listId = 'ac-list';
 
   function fetchSuggestions(query) {
     const urlParams = new URLSearchParams();
@@ -37,7 +40,7 @@ function App() {
 
   function handleItemSelect(index) {
     const selectedItem = suggestions[index];
-    if (!items) {
+    if (!selectedItem) {
       return;
     }
     setSelectedItem(selectedItem);
@@ -49,26 +52,43 @@ function App() {
   return (
     <div className="ac__container">
       <input
+        id={inputId}
         type="text"
         className="ac__input"
         value={userInput}
+        aria-haspopup
+        aria-label="Search for companies"
+        aria-autocomplete="list"
+        aria-controls={listId}
+        aria-activedescendant={
+          hoveredItemIndex !== -1 ? `ac-item-${hoveredItemIndex}` : undefined
+        }
         onChange={handleInputChange}
         onFocus={() => setShowSuggestions(true)}
       />
-      {!!suggestions.length && showSuggestions && (
-        <ul
-          className="suggestion-list"
-          onMouseOut={() => setHoveredItemIndex(-1)}
-        >
-          {suggestions.map((suggestion, index) => {
+      <ul
+        id={listId}
+        aria-label="Company suggestion list"
+        role="listbox"
+        className={classNames('suggestion-list', {
+          'suggestion-list--hidden': !isSuggestionListVisible,
+        })}
+        onMouseOut={() => setHoveredItemIndex(-1)}
+      >
+        {isSuggestionListVisible &&
+          suggestions.map((suggestion, index) => {
+            const isHovered = hoveredItemIndex === index;
+            const isSelected = selectedItem?.name === suggestion.name;
             return (
               <li
                 key={suggestion.name}
+                id={`ac-item-${index}`}
+                role="option"
                 className={classNames('suggestion-list-item', {
-                  'suggestion-list-item--hovered': hoveredItemIndex === index,
-                  'suggestion-list-item--selected':
-                    selectedItem?.name === suggestion.name,
+                  'suggestion-list-item--hovered': isHovered,
+                  'suggestion-list-item--selected': isSelected,
                 })}
+                aria-selected={isSelected}
                 onMouseOver={() => setHoveredItemIndex(index)}
                 onClick={() => handleItemSelect(index)}
               >
@@ -76,8 +96,7 @@ function App() {
               </li>
             );
           })}
-        </ul>
-      )}
+      </ul>
     </div>
   );
 }
