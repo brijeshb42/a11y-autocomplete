@@ -1,28 +1,20 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import './App.css';
+import './Autocomplete.css';
 
-function App() {
+function Autocomplete({ id, onInputChange, renderItem, ...inputProps }) {
   const [suggestions, setSuggestions] = React.useState([]);
   const [userInput, setUserInput] = React.useState('');
   const [hoveredItemIndex, setHoveredItemIndex] = React.useState(-1);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [showSuggestions, setShowSuggestions] = React.useState(false);
   const isSuggestionListVisible = !!suggestions.length && showSuggestions;
-  const inputId = 'ac-input';
-  const listId = 'ac-list';
+  const inputId = id ?? 'ac-input';
+  const listId = id ? `${id}-list` : 'ac-list';
 
   function fetchSuggestions(query) {
-    const urlParams = new URLSearchParams();
-    urlParams.append('query', query);
-    fetch(`https://autocomplete.clearbit.com/v1/companies/suggest?${urlParams}`)
-      .then((resp) => {
-        if (!resp.ok) {
-          throw new Error();
-        }
-        return resp.json();
-      })
+    onInputChange(query)
       .then((newSuggestions) => {
         setHoveredItemIndex(0);
         setSuggestions(newSuggestions);
@@ -118,16 +110,18 @@ function App() {
   return (
     <div className="ac__container">
       <input
+        {...inputProps}
         id={inputId}
         type="text"
         className="ac__input"
         value={userInput}
         aria-haspopup
-        aria-label="Search for companies"
         aria-autocomplete="list"
         aria-controls={listId}
         aria-activedescendant={
-          hoveredItemIndex !== -1 ? `ac-item-${hoveredItemIndex}` : undefined
+          hoveredItemIndex !== -1
+            ? `${inputId}-item-${hoveredItemIndex}`
+            : undefined
         }
         onChange={handleInputChange}
         onFocus={() => setShowSuggestions(true)}
@@ -149,7 +143,7 @@ function App() {
             return (
               <li
                 key={suggestion.name}
-                id={`ac-item-${index}`}
+                id={`${inputId}-item-${index}`}
                 role="option"
                 className={classNames('suggestion-list-item', {
                   'suggestion-list-item--hovered': isHovered,
@@ -159,7 +153,7 @@ function App() {
                 onMouseOver={() => setHoveredItemIndex(index)}
                 onClick={() => handleItemSelect(index)}
               >
-                {suggestion.name}
+                {renderItem(suggestion)}
               </li>
             );
           })}
@@ -168,4 +162,4 @@ function App() {
   );
 }
 
-export default App;
+export default Autocomplete;

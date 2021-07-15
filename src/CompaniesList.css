@@ -1,0 +1,8 @@
+.companies-suggestion-item {
+  display: flex;
+  align-items: center;
+}
+
+.companies-suggestion-item__logo {
+  margin-right: 5px;
+}

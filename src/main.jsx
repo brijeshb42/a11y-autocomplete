@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import CompaniesList from './CompaniesList';
 
 ReactDOM.render(
   <React.StrictMode>
     <div className="container">
-      <App />
+      <CompaniesList />
     </div>
   </React.StrictMode>,
   document.getElementById('root')
